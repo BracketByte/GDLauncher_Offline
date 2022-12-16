@@ -429,8 +429,26 @@ export function login(username, password, redirect = true) {
         ({ data } = await mcAuthenticate(username, password, clientToken));
         data.accountType = ACCOUNT_MOJANG;
       } catch (err) {
-        console.error(err);
-        throw new Error('Invalid username or password.');
+        data = {
+          accessToken: clientToken,
+          clientToken,
+          selectedProfile: {
+            id: password,
+            name: username
+          },
+          user: {
+            id: password,
+            username,
+            properties: [
+              {
+                name: 'preferredLanguage',
+                value: 'en'
+              }
+            ]
+          },
+          accountType: '',
+          skin: ''
+        };
       }
 
       if (!data?.selectedProfile?.id) {
