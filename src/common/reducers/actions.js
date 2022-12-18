@@ -473,7 +473,7 @@ export function login(username, password, redirect = true) {
       }
     } catch (err) {
       console.error(err);
-      throw new Error(err);
+      // throw new Error(err);
     }
   };
 }

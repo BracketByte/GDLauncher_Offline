@@ -16,7 +16,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [
+          # windows-latest, 
+          ubuntu-latest]
 
     steps:
       - name: Context
@@ -40,10 +42,6 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           rustup target add x86_64-pc-windows-msvc --toolchain nightly
-      - name: Install rust (MacOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          rustup target add aarch64-apple-darwin --toolchain nightly
       - name: Install rust (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -97,11 +95,6 @@ jobs:
           GH_ACCESS_TOKEN_RELEASES: ${{ secrets.GH_ACCESS_TOKEN_RELEASES }}
         run: |
           npm run upload
-      - uses: actions/upload-artifact@v1
-        if: matrix.os == 'macos-latest'
-        with:
-          name: MacOs Release
-          path: deploy
 
       - uses: actions/upload-artifact@v1
         if: matrix.os == 'windows-latest'
@@ -114,14 +107,3 @@ jobs:
         with:
           name: Linux Release
           path: deploy
-
-      - uses: actions/setup-ruby@v1
-      - name: Send Webhook Notification
-        if: matrix.os == 'macos-latest'
-        env:
-          JOB_STATUS: ${{ job.status }}
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
-          git clone https://github.com/gorilla-devs/github-actions-discord-webhook.git webhook
-          bash webhook/send.sh $JOB_STATUS $WEBHOOK_URL
-        shell: bash
